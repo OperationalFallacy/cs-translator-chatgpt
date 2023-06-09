@@ -1,34 +1,35 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Project Overview
 
-## Getting Started
+Welcome to the Customer Service Multi-language Translator! This application, powered by Next.js, serves to interpret customer inquiries in your chosen language.
 
-First, run the development server:
+![Demo of Customer Service Translator](./cs-translator.gif)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+## How It Functions
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The website uses Next.js routing to send API calls to ChatGPT. User inputs on the form trigger the API at `http://localhost:3000/openai` which instructs ChatGPT to translate the text via a straightforward prompt. Find additional details in the [`route.ts`](./app/openai/route.ts) file.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Starting the Project
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+1. Install necessary dependencies using the `yarn install` command.
 
-## Learn More
+2. Copy the contents of the [.env.example](./.env.example) file into a new file called `.env.local`. Update this new file with your ChatGPT [API key](https://platform.openai.com/account/api-keys).
 
-To learn more about Next.js, take a look at the following resources:
+3. Launch the development server with one of the following commands:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+`npm run dev`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+`yarn dev`
 
-## Deploy on Vercel
+`pnpm dev`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+4. Navigate to [http://localhost:3000](http://localhost:3000) in your web browser to view the live website.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+You can start editing the website by modifying the `app/page.tsx` file. Any changes will automatically update on the page.
+
+This project leverages [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+
+## Deploying on Vercel
+
+For the easiest way to deploy your Next.js application, use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme), straight from the creators of Next.js.
+
+For more detailed instructions, refer to the [Next.js deployment documentation](https://nextjs.org/docs/deployment).

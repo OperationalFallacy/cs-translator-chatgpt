@@ -1,141 +1,107 @@
 "use client";
-import Image from "next/image";
-import styles from "./page.module.css";
+import { ChangeEvent, useState } from "react";
 import {
   Button,
   Card,
   CardActions,
   CardContent,
+  Select,
+  MenuItem,
+  TextField,
   Typography,
+  SelectChangeEvent,
 } from "@mui/material";
-import { OpenAIApi, Configuration } from 'openai';
-import React, { useState } from "react";
+import styles from "./page.module.css";
 
 export default function Home() {
+  const [textToTranslate, setTextToTranslate] = useState("");
   const [translation, setTranslation] = useState<string | null>(null);
-  
-  const textToTranslate = `
-    Word of the Day
-    something
-    adjective
-    well meaning and kindly.
-    "a benevolent smile"
-  `;
+  const [targetLanguage, setTargetLanguage] = useState<string>("en"); // Default language is Russian
 
-  const aiConfig:  = {
-    {apiKey: process.env.OPENAI_API_KEY||''}
-  }
   const translateText = async () => {
     try {
-      const openai = new OpenAIApi();
-      const response = await openai.createCompletion({
-        engine: 'text-davinci-002',
-        prompt: `Translate the following English text to French:\n${textToTranslate}`,
-        max_tokens: 60,
+      const response = await fetch("/openai", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: textToTranslate, targetLanguage }),
       });
-
-      const translation = response.data.choices[0].text.trim();
-      setTranslation(translation);
+      const data = await response.json();
+      setTranslation(data.translation);
     } catch (error) {
       console.error(error);
     }
   };
 
+  const handleLanguageChange = (event: SelectChangeEvent) => {
+    setTargetLanguage(event.target.value as string);
+  };
+
   return (
     <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
       <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <Card sx={{ minWidth: 275 }}>
+        <Card sx={{ minWidth: 275, width: "100%" }}>
           <CardContent>
             <Typography
               sx={{ fontSize: 14 }}
               color="text.secondary"
               gutterBottom
             >
-              Word of the Day
+              Enter Text to Translate
             </Typography>
-            <Typography variant="h5" component="div">
-              something
-            </Typography>
-            <Typography sx={{ mb: 1.5 }} color="text.secondary">
-              adjective
-            </Typography>
-            <Typography variant="body2">
-              well meaning and kindly.
-              <br />
-              {'"a benevolent smile"'}
-            </Typography>
+            <TextField
+              id="outlined-multiline-static"
+              label="Enter text here"
+              multiline
+              rows={4}
+              variant="outlined"
+              fullWidth
+              value={textToTranslate}
+              onChange={(e) => setTextToTranslate(e.target.value)}
+            />
           </CardContent>
           <CardActions>
+            <Select
+              value={targetLanguage}
+              onChange={handleLanguageChange}
+              sx={{ minWidth: 120 }}
+            >
+              <MenuItem value="en">English</MenuItem>
+              <MenuItem value="ru">Russian</MenuItem>
+              <MenuItem value="fr">French</MenuItem>
+              <MenuItem value="es">Spanish</MenuItem>
+            </Select>
             <Button size="small" onClick={translateText}>
-              Translate this
+              Translate
             </Button>
           </CardActions>
-          {translation && (
-            <Typography variant="body2">Translation: {translation}</Typography>
-          )}
         </Card>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
       </div>
+
+      {translation && (
+        <Card sx={{ minWidth: 275, width: "100%", marginTop: 2 }}>
+          <CardContent>
+            <Typography
+              sx={{ fontSize: 14 }}
+              color="text.secondary"
+              gutterBottom
+            >
+              Translation
+            </Typography>
+            <TextField
+              id="outlined-multiline-static"
+              label="Translation"
+              multiline
+              rows={4}
+              variant="outlined"
+              fullWidth
+              value={translation}
+              InputProps={{
+                readOnly: true,
+              }}
+            />
+          </CardContent>
+        </Card>
+      )}
     </main>
   );
 }
